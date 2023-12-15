@@ -12,7 +12,7 @@ namespace HomagGroup.Blazor3D.Objects
     /// <inheritdoc><see cref="Object3D"/></inheritdoc>
     public class Mesh : Object3D
     {
-        public Mesh() : base("Mesh")
+        public Mesh() : base(ObjectTypes.Mesh)
         {
 
         }
@@ -22,20 +22,16 @@ namespace HomagGroup.Blazor3D.Objects
 
         }
 
-        //TODO: make Array of materials
         /// <summary>
-        /// <para>Collection of <see cref="HomagGroup.Blazor3D.Materials.Material"/> (or derived classes) materials, defining the object's appearance.</para>
+        /// <para>Collection of <see cref="Blazor3D.Materials.Material"/> (or derived classes) materials, defining the object's appearance.</para>
         /// </summary>
-        public Material Material { get; set; } = new MeshStandardMaterial();
+        public MeshStandardMaterial Material { get; set; }
 
         /// <summary>
         /// <para>An instance of <see cref="BufferGeometry"/> (or derived classes), defining the object's structure.</para>
         /// </summary>
-        public BufferGeometry Geometry { get; set; } = new BoxGeometry();
+        public BufferGeometry Geometry { get; set; }
 
-        /// <summary>
-        /// Material <see cref="LineBasicMaterial"/> to draw edges with EdgesGeometry. If not specified, no edges will be drawn.
-        /// </summary>
-        public LineBasicMaterial EdgesMaterial { get; set; } = null!;
+        public List<LineBasicMaterial> EdgesMaterial { get; set; }
     }
 }

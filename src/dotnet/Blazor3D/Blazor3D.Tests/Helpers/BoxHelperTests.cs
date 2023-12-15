@@ -3,7 +3,7 @@ using HomagGroup.Blazor3D.Objects;
 using System;
 using System.Collections.Generic;
 
-namespace HomagGroup.Blazor3D.Tests.Helpers
+namespace Blazor3D.Tests.Helpers
 {
     [TestClass]
     public class BoxHelperTests

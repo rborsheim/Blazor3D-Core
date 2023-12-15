@@ -10,7 +10,7 @@ namespace HomagGroup.Blazor3D.Geometires
     /// <inheritdoc><see cref="BufferGeometry"/></inheritdoc>
     public sealed class BoxGeometry : BufferGeometry
     {
-        public BoxGeometry() : base("BoxGeometry")
+        public BoxGeometry() : base(ObjectTypes.BoxGeometry)
         {
 
         }

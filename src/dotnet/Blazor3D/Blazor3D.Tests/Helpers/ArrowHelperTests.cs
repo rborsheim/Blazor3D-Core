@@ -1,7 +1,7 @@
 ﻿using HomagGroup.Blazor3D.Helpers;
 using HomagGroup.Blazor3D.Maths;
 
-namespace HomagGroup.Blazor3D.Tests.Helpers
+namespace Blazor3D.Tests.Helpers
 {
     [TestClass]
     public class ArrowHelperTests

@@ -9,7 +9,7 @@
     /// <inheritdoc><see cref="Light"/></inheritdoc>
     public sealed class AmbientLight : Light
     {
-        public AmbientLight() : base("AmbientLight")
+        public AmbientLight() : base(ObjectTypes.AmbientLight)
         {
             Intensity = 0.6f;
         }

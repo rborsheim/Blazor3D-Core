@@ -10,7 +10,7 @@ namespace HomagGroup.Blazor3D.Objects
     /// <inheritdoc><see cref="Object3D"/></inheritdoc>
     public sealed class Group : Object3D
     {
-        public Group() : base("Group")
+        public Group() : base(ObjectTypes.Group)
         {
         }
     }

@@ -5,7 +5,7 @@ namespace HomagGroup.Blazor3D.Geometires.Lines
 {
     public class LineGeometry : BufferGeometry
     {
-        public LineGeometry() : base("LineGeometry")
+        public LineGeometry() : base(ObjectTypes.LineGeometry)
         {
 
         }

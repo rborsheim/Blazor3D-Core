@@ -1,10 +1,9 @@
 ﻿using HomagGroup.Blazor3D.Maths;
-using HomagGroup.Blazor3D.Settings;
 
 namespace HomagGroup.Blazor3D.Core
 {
     /// <summary>
-    /// <para>It's a base abstract class for most objects in <strong>HomagGroup.Blazor3D</strong>. 
+    /// <para>It's a base abstract class for most objects in <strong>Blazor3D</strong>. 
     /// It provides functionality for manipulating objects in 3D space.</para>
     ///<para>Wrapper for three.js <a target="_blank" href="https://threejs.org/docs/index.html#api/en/core/Object3D">Object3D</a></para>
     /// </summary>
@@ -46,11 +45,6 @@ namespace HomagGroup.Blazor3D.Core
         /// Collection of <see cref="Object3D"/> child objects.
         /// </summary>
         public List<Object3D> Children { get; set; } = new List<Object3D>();
-
-        /// <summary>
-        /// Settings to create movement animations on the object
-        /// </summary>
-        public AnimateObject3DSettings AnimateObject3DSettings { get; set; }
 
         /// <summary>
         /// Adds a child <see cref="Object3D"/> object to the Children collection.

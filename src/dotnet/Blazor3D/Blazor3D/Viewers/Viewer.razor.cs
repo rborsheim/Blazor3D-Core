@@ -1,25 +1,24 @@
-﻿using Microsoft.JSInterop;
-using Microsoft.AspNetCore.Components;
-using HomagGroup.Blazor3D.Settings;
-using HomagGroup.Blazor3D.Scenes;
-using HomagGroup.Blazor3D.Cameras;
-using HomagGroup.Blazor3D.Controls;
-using Newtonsoft.Json;
+﻿using HomagGroup.Blazor3D.ComponentHelpers;
+using HomagGroup.Blazor3D.Configuration;
+using HomagGroup.Blazor3D.Core;
+using HomagGroup.Blazor3D.Events;
+using HomagGroup.Blazor3D.Lights;
+using HomagGroup.Blazor3D.Materials;
 using HomagGroup.Blazor3D.Maths;
 using HomagGroup.Blazor3D.Objects;
-using HomagGroup.Blazor3D.Lights;
-using HomagGroup.Blazor3D.ComponentHelpers;
-using HomagGroup.Blazor3D.Events;
+using HomagGroup.Blazor3D.Settings;
+using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using HomagGroup.Blazor3D.Core;
-using HomagGroup.Blazor3D.Materials;
+using Newtonsoft.Json.Serialization;
 
 namespace HomagGroup.Blazor3D.Viewers
 {
     /// <summary>
-    /// <para>HomagGroup.Blazor3D viewer component.</para>
+    /// <para>Blazor3D viewer component.</para>
     /// </summary>
-    public sealed partial class Viewer : IDisposable
+    public partial class Viewer : IDisposable
     {
         private IJSObjectReference bundleModule = null!;
 
@@ -31,7 +30,25 @@ namespace HomagGroup.Blazor3D.Viewers
 
         private event LoadedObjectEventHandler ObjectLoadedPrivate = null!;
 
-        
+        public event EventHandler? UpButtonClicked;
+        public event EventHandler? DownButtonClicked;
+        public event EventHandler? ModelClicked;
+
+        protected virtual void RaiseUpButtonClicked(EventArgs e)
+        {
+            UpButtonClicked?.Invoke(this, e);
+        }
+
+        protected virtual void RaiseDownButtonClicked(EventArgs e)
+        {
+            DownButtonClicked?.Invoke(this, e);
+        }
+
+        protected virtual void RaiseModelClicked(EventArgs e)
+        {
+            ModelClicked?.Invoke(this, e);
+        }
+
         /// <summary>
         /// Raises when user selects object by mouse clicking inside viewer area.
         /// </summary>
@@ -50,16 +67,31 @@ namespace HomagGroup.Blazor3D.Viewers
        
 
         /// <summary>
-        /// <para><see cref="Settings.ViewerSettings"/> parameter of the component.</para>
+        /// <para><see cref="Settings.ViewerOptions"/> parameter of the component.</para>
         /// </summary>
         [Parameter]
-        public ViewerSettings ViewerSettings { get; set; } = new ViewerSettings();
+        public ViewerOptions ViewerSettings { get; set; } = new ViewerOptions();
 
         /// <summary>
-        /// <para><see cref="Scenes.Scene"/> parameter of the component. Default is empty scene.</para>
+        /// <para><see cref="Scenes.SceneOptions"/> parameter of the component. Default is empty scene.</para>
         /// </summary>
         [Parameter]
-        public Scene Scene { get; set; } = new Scene();
+        public Scenes.SceneOptions Scene { get; set; } = new Scenes.SceneOptions();
+
+
+        /// <summary>
+        /// <para><see cref="Scenes.SceneOptions"/> parameter of the component. Default is empty scene.</para>
+        /// </summary>
+        [Parameter]
+        public Scenes.SceneOptions SceneOrtho { get; set; } = new Scenes.SceneOptions();
+
+        // perhaps these buffers should be part of the scene itself?
+
+        [Parameter]
+        public Dictionary<Guid, byte[]> VertexBuffers { get; set; } = new Dictionary<Guid, byte[]>();
+
+        [Parameter]
+        public Dictionary<Guid, byte[]> IndexBuffers { get; set; } = new Dictionary<Guid, byte[]>();
 
         /// <summary>
         /// <para>If true and there is no children objects in the scene, then adds the default lights and box mesh. Default value is false.</para>
@@ -68,16 +100,16 @@ namespace HomagGroup.Blazor3D.Viewers
         public bool UseDefaultScene { get; set; } = false;
 
         /// <summary>
-        /// <para><see cref="PerspectiveCamera"/> used to display the scene.</para>
+        /// <para><see cref="PerspectiveCameraOptions"/> used to display the scene.</para>
         /// </summary>
         [Parameter]
-        public Camera Camera { get; set; } = new PerspectiveCamera() { Position = new Vector3(3, 3, 3) };
+        public CameraOptions Camera { get; set; } = new PerspectiveCameraOptions() { Position = new Vector3(3, 3, 3) };
 
         /// <summary>
-        /// <para><see cref="Controls.OrbitControls"/> used to rotate, pan and scale the view.</para>
+        /// <para><see cref="Configuration.OrbitControlOptions"/> used to rotate, pan and scale the view.</para>
         /// </summary>
         [Parameter]
-        public OrbitControls OrbitControls { get; set; } = new OrbitControls();
+        public OrbitControlOptions OrbitControls { get; set; } = new OrbitControlOptions();
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -89,7 +121,7 @@ namespace HomagGroup.Blazor3D.Viewers
 
                 bundleModule = await JSRuntime.InvokeAsync<IJSObjectReference>(
                     "import",
-                    "./_content/Blazor3D/js/bundle.js")
+                    "./_content/Blazor3D/js/bundle.js?v=390")
                 .AsTask();
 
                 if (UseDefaultScene && !Scene.Children.Any())
@@ -97,14 +129,25 @@ namespace HomagGroup.Blazor3D.Viewers
                     AddDefaultScene();
                 }
 
-                var json = JsonConvert.SerializeObject(new
+                ViewerSettings.CanSelect = true;
+
+                var sceneDetails = new Blazor3DConfiguration(Scene, SceneOrtho, ViewerSettings, Camera, OrbitControls);
+
+                var json = JsonConvert.SerializeObject(sceneDetails,
+                    new JsonSerializerSettings
+                    {
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
+
+                foreach (var vertexBuffer in VertexBuffers)
                 {
-                    Scene = Scene,
-                    ViewerSettings = ViewerSettings,
-                    Camera = Camera,
-                    OrbitControls = OrbitControls,
-                },
-                SerializationHelper.GetSerializerSettings());
+                    await bundleModule.InvokeVoidAsync("addVertexBuffer", vertexBuffer.Key, vertexBuffer.Value);
+                }
+
+                foreach (var indexBuffer in IndexBuffers)
+                {
+                    await bundleModule.InvokeVoidAsync("addIndexBuffer", indexBuffer.Key, indexBuffer.Value);
+                }
 
                 await bundleModule.InvokeVoidAsync("loadViewer", json);
                 await OnModuleLoaded();
@@ -119,6 +162,11 @@ namespace HomagGroup.Blazor3D.Viewers
         {
             var json = JsonConvert.SerializeObject(Scene, SerializationHelper.GetSerializerSettings());
             await bundleModule.InvokeVoidAsync("updateScene", json);
+        }
+
+        public async Task UpdateVertexBuffer(Guid id, byte[] vertexBuffer)
+        {
+            await bundleModule.InvokeVoidAsync("updateVertexBuffer", id, vertexBuffer);
         }
 
         /// <summary>
@@ -138,7 +186,7 @@ namespace HomagGroup.Blazor3D.Viewers
         /// Apply updated camera settings to viewer.
         /// </summary>
         /// <returns>Task</returns>
-        public async Task UpdateCamera(Camera camera)
+        public async Task UpdateCamera(CameraOptions camera)
         {
             Camera = camera;
             var json = JsonConvert.SerializeObject(Camera, SerializationHelper.GetSerializerSettings());
@@ -159,7 +207,7 @@ namespace HomagGroup.Blazor3D.Viewers
         /// </summary>
         /// <param name="orbitControls">new orbit controls</param>
         /// <returns>Task</returns>
-        public async Task UpdateOrbitControls(OrbitControls orbitControls)
+        public async Task UpdateOrbitControls(OrbitControlOptions orbitControls)
         {
             OrbitControls = orbitControls;
             var json = JsonConvert.SerializeObject(OrbitControls, SerializationHelper.GetSerializerSettings());
@@ -240,20 +288,6 @@ namespace HomagGroup.Blazor3D.Viewers
         }
 
         /// <summary>
-        /// <para>Imports sprite to scene.</para>
-        /// </summary>
-        /// <param name="settings"> Settings that will be applied during 2D sprite file importing.</param>
-        /// <returns>Guid of the loaded item</returns>
-        public async Task<Guid> ImportSpriteAsync(SpriteImportSettings settings)
-        {
-            settings.Uuid = settings.Uuid ?? Guid.NewGuid();
-            settings.Material = settings.Material ?? new SpriteMaterial();
-            var json = JsonConvert.SerializeObject(settings, SerializationHelper.GetSerializerSettings());
-            await bundleModule.InvokeVoidAsync("importSprite", json);
-            return settings.Uuid.Value;
-        }
-
-        /// <summary>
         /// <para>Recursively finds object by it's uuid in collection.</para>
         /// </summary>
         /// <param name="uuid">Object's uuid</param>
@@ -284,7 +318,7 @@ namespace HomagGroup.Blazor3D.Viewers
             await Task.WhenAll(handlerTasks);
         }
 
-        //todo: move to helper
+        //todo: move to helper? Or remove entirely
         private void AddDefaultScene()
         {
             Scene.Add(new AmbientLight());
@@ -297,13 +331,33 @@ namespace HomagGroup.Blazor3D.Viewers
                     Z = 0
                 }
             });
-            Scene.Add(new Mesh());
+            //Scene.Add(new Mesh());
         }
 
+        // todo: maybe need to change this to separate 'selected' from 'clicked' they blend together at this point
         private void OnObjectSelectedStatic(Object3DStaticArgs e)
         {
             if (ViewerSettings.ContainerId == e.ContainerId)
             {
+
+                // todo: investigate this using object oriented, rather than two dictionaries
+                Console.WriteLine($"Hi from Blazor3D {e.ContainerId}|{e.UUID}");
+                if (Scene.ClickableObjects.TryGetValue(e.UUID, out var sceneObject))
+                {
+                    RaiseModelClicked(new EventArgs());
+                }
+                else if (SceneOrtho.ClickableObjects.TryGetValue(e.UUID, out var controlObject3D))
+                {
+                    if (controlObject3D.Name == "UpButton")
+                    {
+                        RaiseUpButtonClicked(new EventArgs());
+                    }
+                    else if (controlObject3D.Name == "DownButton")
+                    {
+                        RaiseDownButtonClicked(new EventArgs());
+                    }
+                }
+
                 ObjectSelected?.Invoke(new Object3DArgs() { UUID = e.UUID });
             }
         }
@@ -336,7 +390,7 @@ namespace HomagGroup.Blazor3D.Viewers
                 var type = c.Property("type")?.Value.ToString();
                 var name = c.Property("name")?.Value.ToString() ?? string.Empty;
                 var uuid = c.Property("uuid")?.Value.ToString() ?? string.Empty;
-                if (type == "Mesh")
+                if (type == ObjectTypes.Mesh)
                 {
                     var mesh = new Mesh()
                     {
@@ -346,7 +400,7 @@ namespace HomagGroup.Blazor3D.Viewers
                     result.Add(mesh);
                 }
 
-                if (type == "Group")
+                if (type == ObjectTypes.Group)
                 {
                     var ch = c.Property("children")?.Value;
                     var childrenResult = ParseChildren(ch);
@@ -391,15 +445,9 @@ namespace HomagGroup.Blazor3D.Viewers
                     ObjectLoaded?.Invoke(new Object3DArgs() { UUID = e.UUID });
                 }
             }
-
-            if (json.Contains("\"type\":\"Sprite\""))
+            else
             {
-                var sprite = JsonConvert.DeserializeObject<Sprite>(json);
-                if (sprite != null)
-                {
-                    Scene.Children.Add(sprite);
-                    ObjectLoaded?.Invoke(new Object3DArgs() { UUID= e.UUID });
-                }
+                Console.WriteLine(json.ToString());
             }
         }
 

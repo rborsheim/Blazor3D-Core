@@ -9,7 +9,7 @@
     /// <inheritdoc><see cref="Light"/></inheritdoc>
     public sealed class PointLight : Light
     {
-        public PointLight() : base("PointLight")
+        public PointLight() : base(ObjectTypes.PointLight)
         {
 
         }

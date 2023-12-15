@@ -12,7 +12,7 @@ namespace HomagGroup.Blazor3D.Textures
             Type = type;
         }
 
-        public string Type { get; } = "Texture";
+        public string Type { get; } = ObjectTypes.Texture;
 
 
         /// <summary>

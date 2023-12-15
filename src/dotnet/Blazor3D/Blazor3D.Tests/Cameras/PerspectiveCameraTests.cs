@@ -1,6 +1,6 @@
-﻿using HomagGroup.Blazor3D.Cameras;
+﻿using HomagGroup.Blazor3D.Configuration;
 
-namespace HomagGroup.Blazor3D.Tests.Cameras
+namespace Blazor3D.Tests.Cameras
 {
     [TestClass]
     public class PerspectiveCameraTests
@@ -8,7 +8,7 @@ namespace HomagGroup.Blazor3D.Tests.Cameras
         [TestMethod]
         public void DefaultConstuctorShouldCreateWithPredefinedValues()
         {
-            var camera = new PerspectiveCamera();
+            var camera = new PerspectiveCameraOptions();
             Assert.AreEqual("PerspectiveCamera", camera.Type);
             Assert.AreEqual(0.1, camera.Near);
             Assert.AreEqual(1000, camera.Far);
@@ -20,7 +20,7 @@ namespace HomagGroup.Blazor3D.Tests.Cameras
         [TestMethod]
         public void ConstuctorWithParamsShouldCreateWithPredefinedValues()
         {
-            var camera = new PerspectiveCamera(fov:10, near:0.2, far:100);
+            var camera = new PerspectiveCameraOptions(fov:10, near:0.2, far:100);
             Assert.AreEqual("PerspectiveCamera", camera.Type);
             Assert.AreEqual(0.2, camera.Near);
             Assert.AreEqual(100, camera.Far);

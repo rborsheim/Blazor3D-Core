@@ -1,0 +1,21 @@
+﻿{
+  "compilerOptions": {
+    "target": "esnext", // Compile down to latest ECMAScript version for compatibility
+    "module": "esnext", // Use latest module system
+    "lib": [ "dom", "esnext" ], // Include type definitions for DOM and latest ECMAScript features
+    "allowJs": false,
+    "skipLibCheck": true, // Skip type checking of all declaration files (*.d.ts)
+    "esModuleInterop": true, // Enables compatibility with Babel/TypeScript module interop
+    "noEmitOnError": false, // Do not emit outputs if any errors were reported
+    "noImplicitAny": true,
+    "strict": true,
+    "strictNullChecks": false, // Disable strict null checks
+    "noImplicitThis": false, // Allow 'this' to be of any type
+    "noImplicitReturns": false, // Allow functions without return types and implicit returns
+    "noUnusedLocals": false, // Do not report errors on unused locals
+    "noUnusedParameters": false, // Do not report errors on unused parameters
+    "moduleResolution": "node",
+    "resolveJsonModule": true // Allow importing JSON modules
+  },
+  "include": [ "./src/**/*" ]
+}

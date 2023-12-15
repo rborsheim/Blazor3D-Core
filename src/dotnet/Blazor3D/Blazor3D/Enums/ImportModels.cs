@@ -3,7 +3,7 @@
 namespace HomagGroup.Blazor3D.Enums
 {
     /// <summary>
-    /// 3D model formats, which can be used for importing to or exporting from <see cref="Scene"/>.
+    /// 3D model formats, which can be used for importing to or exporting from <see cref="SceneOptions"/>.
     /// </summary>
     public enum Import3DFormats
     {

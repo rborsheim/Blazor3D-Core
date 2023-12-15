@@ -13,7 +13,7 @@ namespace HomagGroup.Blazor3D.Geometires
     /// <inheritdoc><see cref="BufferGeometry"/></inheritdoc>
     public sealed class CircleGeometry : BufferGeometry
     {
-        public CircleGeometry() : base("CircleGeometry")
+        public CircleGeometry() : base(ObjectTypes.CircleGeometry)
         {
         }
 

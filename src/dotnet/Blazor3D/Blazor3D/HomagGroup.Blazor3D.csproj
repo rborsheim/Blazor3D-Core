@@ -37,6 +37,7 @@ See examples of using here https://github.com/HomagGroup/HomagGroup.Blazor3D
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="6.0.10" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="TypeGen" Version="5.0.0" />
   </ItemGroup>
 
 </Project>

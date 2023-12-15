@@ -1,6 +1,6 @@
-using HomagGroup.Blazor3D.Cameras;
+﻿using HomagGroup.Blazor3D.Configuration;
 
-namespace HomagGroup.Blazor3D.Tests.Cameras
+namespace Blazor3D.Tests.Cameras
 {
     [TestClass]
     public class OrthographicCameraTests
@@ -8,7 +8,7 @@ namespace HomagGroup.Blazor3D.Tests.Cameras
         [TestMethod]
         public void DefaultConstuctorShouldCreateWithPredefinedValues()
         {
-            var camera = new OrthographicCamera();
+            var camera = new OrthographicCameraOptions();
             Assert.AreEqual("OrthographicCamera", camera.Type);
             Assert.AreEqual(0.1, camera.Near);
             Assert.AreEqual(2000, camera.Far);
@@ -24,7 +24,7 @@ namespace HomagGroup.Blazor3D.Tests.Cameras
         [TestMethod]
         public void ConstuctorWithParamsShouldCreateWithSpecifiedValues()
         {
-            var camera = new OrthographicCamera(left: -2, right: 2, top: 2, bottom: -2, near: 0, far: 100, zoom: 0.5);
+            var camera = new OrthographicCameraOptions(left: -2, right: 2, top: 2, bottom: -2, near: 0, far: 100, zoom: 0.5);
             Assert.AreEqual("OrthographicCamera", camera.Type);
             Assert.AreEqual(0, camera.Near);
             Assert.AreEqual(100, camera.Far);

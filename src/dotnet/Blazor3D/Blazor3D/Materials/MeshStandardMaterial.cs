@@ -7,11 +7,10 @@ namespace HomagGroup.Blazor3D.Materials
     /// <para>This class inherits from <see cref="Material"/></para>
     /// <para>Wrapper for three.js <a target="_blank" href="https://threejs.org/docs/index.html#api/en/materials/MeshStandardMaterial">MeshStandardMaterial</a></para>
     /// </summary>
-    /// <inheritdoc><see cref="MeshStandardMaterial"/></inheritdoc>
     public sealed class MeshStandardMaterial : Material
     {
         
-        public MeshStandardMaterial() : base("MeshStandardMaterial")
+        public MeshStandardMaterial() : base(ObjectTypes.MeshStandardMaterial)
         {
 
         }

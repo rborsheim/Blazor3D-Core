@@ -31,7 +31,7 @@ namespace HomagGroup.Blazor3D.Settings
         /// <summary>
         /// <para>Material that will be applied to all loaded meshes.</para>
         /// <para>Currently works only for <see cref="Import3DFormats.Stl"/> STL format.</para>
-        /// <para>If not specified, the default <see cref="MeshStandardMaterial"/> is applied to the imported objects.</para>
+        /// <para>If not specified, the default <see cref=ObjectTypes.MeshStandardMaterial/> is applied to the imported objects.</para>
         /// </summary>
         public MeshStandardMaterial Material { get; set; } = null!;
     }

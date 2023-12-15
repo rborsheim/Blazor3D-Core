@@ -8,7 +8,7 @@
         /// <summary>
         /// Default constructor
         /// </summary>
-        public LineBasicMaterial() : base("LineBasicMaterial")
+        public LineBasicMaterial() : base(ObjectTypes.LineBasicMaterial)
         {
         }
 

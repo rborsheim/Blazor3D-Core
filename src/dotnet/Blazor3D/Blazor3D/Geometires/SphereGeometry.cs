@@ -8,7 +8,7 @@ namespace HomagGroup.Blazor3D.Geometires
     /// </summary>
     public sealed class SphereGeometry : BufferGeometry
     {
-        public SphereGeometry() : base("SphereGeometry")
+        public SphereGeometry() : base(ObjectTypes.SphereGeometry)
         {
         }
 

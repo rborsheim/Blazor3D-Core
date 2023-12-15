@@ -1,0 +1,4 @@
+﻿{
+  "generationSpecs": [ "Blazor3DGenerationSpec" ],
+  "typeNameConverters": [ "TypeNameConverter" ]
+}
